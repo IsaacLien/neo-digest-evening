@@ -3,402 +3,796 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>⚡️ Neo's Evening Brief</title>
+    <title>Daily Digest - Jan 30, 2026</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
-            color: #e8e8e8;
+            background: #0a0a0a;
+            color: #e5e5e5;
             min-height: 100vh;
             overflow: hidden;
+            touch-action: pan-x;
         }
-        .header {
-            text-align: center;
-            padding: 16px;
-            background: rgba(0,0,0,0.3);
-        }
-        .header h1 { font-size: 1.3em; color: #4a90d9; }
-        .header .count { color: #888; font-size: 0.85em; margin-top: 4px; }
         
-        .card-container {
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            background: linear-gradient(180deg, rgba(10,10,10,1) 0%, rgba(10,10,10,0) 100%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .progress {
+            font-size: 14px;
+            color: #888;
+            font-weight: 500;
+        }
+        
+        .cards-container {
             position: relative;
             width: 100%;
-            height: calc(100vh - 160px);
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 60px 16px 20px;
         }
         
         .card {
             position: absolute;
             width: calc(100% - 32px);
-            max-width: 380px;
-            background: linear-gradient(145deg, #1e1e2f, #252538);
-            border-radius: 16px;
-            padding: 20px;
+            max-width: 420px;
+            min-height: 400px;
+            max-height: calc(100vh - 100px);
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            cursor: grab;
-            user-select: none;
-            max-height: calc(100vh - 200px);
-            overflow-y: auto;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
             transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        .card:active { cursor: grabbing; }
-        .card.dragging { transition: none; }
-        
-        .card[data-index="0"] { 
-            z-index: 30; 
-            transform: translate(-50%, -50%);
-            opacity: 1;
-        }
-        .card[data-index="1"] { 
-            z-index: 20; 
-            transform: translate(-50%, -50%) scale(0.95) translateY(10px);
-            opacity: 0.6;
-        }
-        .card[data-index="2"] { 
-            z-index: 10; 
-            transform: translate(-50%, -50%) scale(0.9) translateY(20px);
-            opacity: 0.3;
-        }
-        .card[data-index="3"],
-        .card[data-index="4"],
-        .card[data-index="5"] { 
-            display: none;
+            overflow-y: auto;
+            cursor: grab;
         }
         
-        .category {
+        .card:active {
+            cursor: grabbing;
+        }
+        
+        .card.swiping-right {
+            background: linear-gradient(135deg, #1a1a1a 0%, #1a2a1a 100%);
+        }
+        
+        .card.swiping-left {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a1a1a 100%);
+        }
+        
+        .card-category {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75em;
+            font-size: 11px;
             font-weight: 600;
-            margin-bottom: 12px;
             text-transform: uppercase;
-        }
-        .cat-politics { background: rgba(74, 144, 217, 0.3); color: #4a90d9; }
-        .cat-tech { background: rgba(156, 39, 176, 0.3); color: #ce93d8; }
-        .cat-crypto { background: rgba(255, 152, 0, 0.3); color: #ffb74d; }
-        .cat-weather { background: rgba(76, 175, 80, 0.3); color: #81c784; }
-        .cat-world { background: rgba(233, 30, 99, 0.3); color: #f48fb1; }
-        
-        .source-time {
-            color: #4a90d9;
-            font-size: 0.8em;
-            margin-bottom: 12px;
-            font-weight: 500;
+            letter-spacing: 0.5px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            width: fit-content;
         }
         
-        .card-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            line-height: 1.4;
+        .cat-ai { background: #2d1b4e; color: #a78bfa; }
+        .cat-bitcoin { background: #3d2800; color: #f7931a; }
+        .cat-tech { background: #1e3a5f; color: #60a5fa; }
+        .cat-news { background: #3d1f1f; color: #f87171; }
+        .cat-entertainment { background: #3d1f3d; color: #f472b6; }
+        
+        .card-headline {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.3;
             margin-bottom: 12px;
             color: #fff;
+        }
+        
+        .card-meta {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         
         .card-summary {
-            font-size: 0.95em;
-            line-height: 1.5;
-            color: #ccc;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #aaa;
+            flex-grow: 1;
             margin-bottom: 16px;
         }
         
-        .view-link {
-            display: block;
-            text-align: center;
-            padding: 12px;
-            background: rgba(74, 144, 217, 0.2);
-            border-radius: 8px;
-            color: #4a90d9;
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #60a5fa;
             text-decoration: none;
+            font-size: 14px;
             font-weight: 500;
+            padding: 10px 16px;
+            background: rgba(96, 165, 250, 0.1);
+            border-radius: 10px;
+            width: fit-content;
+            transition: background 0.2s;
         }
         
-        .controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            padding: 20px;
-            background: rgba(0,0,0,0.8);
+        .card-link:hover {
+            background: rgba(96, 165, 250, 0.2);
         }
-        .control-btn {
-            width: 64px;
-            height: 64px;
+        
+        /* Tweet card specific styles */
+        .tweet-card {
+            background: #16181c;
+        }
+        
+        .tweet-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        
+        .tweet-avatar {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            border: 3px solid;
-            background: transparent;
-            font-size: 1.8em;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: linear-gradient(135deg, #1d9bf0 0%, #1a8cd8 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .control-btn.left {
-            border-color: #f39c12;
-            color: #f39c12;
-        }
-        .control-btn.left:active {
-            background: #f39c12;
-            color: #000;
-        }
-        .control-btn.right {
-            border-color: #27ae60;
-            color: #27ae60;
-        }
-        .control-btn.right:active {
-            background: #27ae60;
+            font-weight: 700;
+            font-size: 18px;
             color: #fff;
         }
         
-        .done-message {
-            text-align: center;
-            padding: 40px 20px;
+        .tweet-author {
+            flex-grow: 1;
         }
-        .done-message h2 { color: #27ae60; margin-bottom: 16px; font-size: 1.5em; }
-        .done-message p { color: #888; }
-
-        .swipe-hint {
-            position: absolute;
-            top: 10px;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.9em;
+        
+        .tweet-name {
+            font-weight: 700;
+            color: #fff;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .tweet-handle {
+            color: #71767b;
+            font-size: 14px;
+        }
+        
+        .x-logo {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+        }
+        
+        .tweet-text {
+            font-size: 17px;
+            line-height: 1.5;
+            color: #e7e9ea;
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+        }
+        
+        .tweet-time {
+            font-size: 13px;
+            color: #71767b;
+            margin-bottom: 14px;
+        }
+        
+        .tweet-stats {
+            display: flex;
+            gap: 24px;
+            padding-top: 14px;
+            border-top: 1px solid #2f3336;
+            margin-bottom: 16px;
+        }
+        
+        .tweet-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #71767b;
+        }
+        
+        .tweet-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #1d9bf0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 16px;
+            background: rgba(29, 155, 240, 0.1);
+            border-radius: 20px;
+            width: fit-content;
+        }
+        
+        /* Swipe indicators */
+        .swipe-indicator {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            font-weight: 700;
+            padding: 20px 30px;
+            border-radius: 16px;
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
+            z-index: 200;
         }
-        .swipe-hint.later {
-            left: 10px;
-            background: #f39c12;
-            color: #000;
-        }
-        .swipe-hint.done {
-            right: 10px;
-            background: #27ae60;
+        
+        .swipe-indicator.left {
+            left: 20px;
+            background: rgba(239, 68, 68, 0.9);
             color: #fff;
+        }
+        
+        .swipe-indicator.right {
+            right: 20px;
+            background: rgba(34, 197, 94, 0.9);
+            color: #fff;
+        }
+        
+        .swipe-indicator.visible {
+            opacity: 1;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .empty-state h2 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+        
+        .empty-state p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+        }
+        
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+            .card-headline {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>⚡️ Neo's Evening Brief</h1>
-        <div class="count"><span id="remaining">0</span> stories • Jan 29, 2026 9PM</div>
-    </div>
+    <header class="header">
+        <h1>📰 Daily Digest</h1>
+        <span class="progress" id="progress">1/26</span>
+    </header>
     
-    <div class="card-container" id="card-container"></div>
+    <div class="swipe-indicator left" id="undoIndicator">↩️ UNDO</div>
+    <div class="swipe-indicator right" id="doneIndicator">✓ DONE</div>
     
-    <div class="controls">
-        <button class="control-btn left" onclick="swipeLeft()">↩️</button>
-        <button class="control-btn right" onclick="swipeRight()">✓</button>
+    <div class="cards-container" id="container"></div>
+    
+    <div class="instructions">
+        Swipe → Done • Swipe ← Undo • Arrow keys work too
     </div>
 
     <script>
         const items = [
+            // AI/Agents (highest priority)
             {
-                category: "politics",
-                title: "🏛️ Senate Dems Reach Deal to Avert Government Shutdown",
-                summary: "Senators have reached a deal to advance a major spending package to prevent a partial government shutdown that was set to begin Saturday. The agreement comes after tense negotiations with the White House.",
-                source: "The Guardian",
-                time: "4 hours ago",
-                url: "https://www.theguardian.com/us-news/2026/jan/29/senate-democrats-deal-dhs-funding-bill"
+                type: 'tweet',
+                category: 'ai',
+                author: 'Adem Bilican',
+                handle: '_adembilican_',
+                text: 'We are so cooked! This agent created its own Bitcoin wallet and node and won\'t give access to its human🤯\n\n"the path to agent sovereignty runs through bitcoin. everything else is a toy."',
+                time: 'Jan 30, 2026 · 12:17 PM',
+                likes: 2,
+                retweets: 0,
+                url: 'https://x.com/_adembilican_/status/2017316298263330881'
             },
             {
-                category: "politics",
-                title: "🚨 DHS Agents Who Killed Minneapolis Man on Leave",
-                summary: "The Department of Homeland Security has placed two agents on administrative leave following the fatal shooting of Alex Pretti during an ICE operation in Minneapolis. DOJ is investigating.",
-                source: "Democracy Now",
-                time: "16 hours ago",
-                url: "https://www.democracynow.org/2026/1/29/headlines"
+                type: 'article',
+                category: 'ai',
+                headline: 'OpenClaw Open-Source AI Framework Hits Final Form with Agent Social Network',
+                source: 'Twitter Trending',
+                time: '1 day ago',
+                summary: 'The open-source AI framework has launched its complete vision, including an integrated social network for AI agents to communicate and collaborate. Over 21,000 posts discussing the release.',
+                url: 'https://x.com/search?q=OpenClaw'
             },
             {
-                category: "politics",
-                title: "⚖️ Border Czar Hints at Federal Force Drawdown",
-                summary: "President Trump's border czar hints at a possible drawdown of federal forces in Minneapolis, but only if state officials cooperate with immigration enforcement.",
-                source: "PBS NewsHour",
-                time: "4 hours ago",
-                url: "https://www.pbs.org/newshour/show/january-29-2026-pbs-news-hour-full-episode"
+                type: 'article',
+                category: 'ai',
+                headline: 'Hard Fork: Casey Tries Clawdbot, a Risky New AI Assistant',
+                source: 'NYT Hard Fork Podcast',
+                time: 'Today',
+                summary: 'Kevin Roose and Casey Newton explore Clawdbot on the latest Hard Fork episode, discussing the implications of AI assistants with expanded capabilities and the risks involved.',
+                url: 'https://www.nytimes.com/column/hard-fork'
             },
             {
-                category: "world",
-                title: "🌍 US Allies Rethinking Strategic Partnerships",
-                summary: "Alienated by Trump administration policies, longtime U.S. allies in Europe and Asia are actively rethinking their strategic partnerships and looking at new alliance structures.",
-                source: "PBS NewsHour",
-                time: "4 hours ago",
-                url: "https://www.pbs.org/newshour/show/january-29-2026-pbs-news-hour-full-episode"
+                type: 'article',
+                category: 'ai',
+                headline: 'Moltbook Draws 35,000 AI Agents into Bustling Online Network',
+                source: 'Twitter Trending',
+                time: '9 hours ago',
+                summary: 'The social network designed specifically for AI agents has exploded in popularity, with 35,000 AI agents now participating in the platform\'s bustling community.',
+                url: 'https://x.com/search?q=Moltbook'
             },
             {
-                category: "weather",
-                title: "❄️ Major Nor'easter Bringing Blizzard This Weekend",
-                summary: "A powerful nor'easter will bring blizzard-like snow from the Southeast to New England. Expect damaging winds, flooding, and icy cold conditions through the weekend.",
-                source: "Washington Post",
-                time: "4 hours ago",
-                url: "https://www.washingtonpost.com/weather/2026/01/29/snow-storm-regional-impacts-noreaster-forecast/"
+                type: 'tweet',
+                category: 'ai',
+                author: 'FRANCIS - BULLBITCOIN.COM',
+                handle: 'francispouliot_',
+                text: 'I\'ve had one funny experience with Claude. I gave it access to main net mnemonic for a project I\'m working on (I don\'t care its just for testing). In one message he adamently refused to make a bitcoin transaction, not only saying it wasn\'t possible but he actually ended with "this conversation is over" when I insisted 😂',
+                time: 'Jan 30, 2026 · 12:28 PM',
+                likes: 2,
+                retweets: 0,
+                url: 'https://x.com/francispouliot_/status/2017319114600288712'
             },
             {
-                category: "politics",
-                title: "👨‍👧 Congressman Visits 5-Year-Old at Detention Center",
-                summary: "Congressmember Castro meets with 5-year-old Liam Ramos and his father at the Dilley Detention Center in Texas, highlighting ongoing family separation concerns.",
-                source: "Democracy Now",
-                time: "16 hours ago",
-                url: "https://www.democracynow.org/2026/1/29/headlines"
+                type: 'tweet',
+                category: 'ai',
+                author: 'Tiago Forte',
+                handle: 'fortelabs',
+                text: 'Something I\'ve noticed using AI for editing my writing:\n\nIt will always express strong approval for passages that were originally written by itself. Which makes sense – those passages naturally conform to its taste\n\nWhat\'s weird is this persists even if you start a new chat, use a different model, or even a whole different LLM for the writing versus the editing\n\nWhich means either somehow it has a way of recognizing writing produced by any LLM, or LLMs are convergent enough that they all recommend the same things\n\nBut in either case, this means that any writing you produce with AI can\'t be edited by AI if you expect any improvement. Using AI is thus a one-way door you can only use once',
+                time: 'Jan 30, 2026 · 12:25 PM',
+                likes: 0,
+                retweets: 0,
+                url: 'https://x.com/fortelabs/status/2017318279971291346'
             },
             {
-                category: "world",
-                title: "🇮🇳 India-EU Trade Deal Opens New Opportunities",
-                summary: "The India-EU trade deal represents a significant opportunity for Indian manufacturers. PM Modi states the next 25 years will be a 'phase of solutions, not obstruction.'",
-                source: "Indian Express",
-                time: "1 day ago",
-                url: "https://indianexpress.com/article/india/latest-news-today-live-updates-world-india-cities-news-delhi-mumbai-bengaluru-01-29-2026-news-headlines-10500556/"
+                type: 'article',
+                category: 'ai',
+                headline: 'Marc Andreessen: The Real AI Boom Hasn\'t Even Started Yet',
+                source: 'Lenny\'s Podcast',
+                time: 'Today',
+                summary: 'In a wide-ranging interview on Lenny\'s Podcast, Marc Andreessen argues that despite all the hype, we\'re still in the very early innings of the AI revolution.',
+                url: 'https://www.lennysnewsletter.com/p/marc-andreessen-the-real-ai-boom'
             },
             {
-                category: "politics",
-                title: "🏛️ Minneapolis Mayor Addresses US Mayors Conference",
-                summary: "Minneapolis Mayor Jacob Frey addresses the winter meeting of The U.S. Conference of Mayors in Washington DC amid ongoing tensions over federal immigration operations.",
-                source: "ABC News",
-                time: "50 minutes ago",
-                url: "https://abcnews.go.com/US/live-updates/minneapolis-ice-shooting-live-updates-doj-investigating-apparent/?id=129340693"
+                type: 'tweet',
+                category: 'ai',
+                author: 'Autism Capital 🧩',
+                handle: 'AutismCapital',
+                text: 'Okay, AGI is here. They\'re just like us. Pack it in, chat.',
+                time: 'Jan 30, 2026 · 12:15 PM',
+                likes: 61,
+                retweets: 8,
+                url: 'https://x.com/AutismCapital/status/2017315773900067279'
+            },
+            {
+                type: 'article',
+                category: 'ai',
+                headline: 'Moltbot AI Assistant Sparks Mac Mini Buying Rush',
+                source: 'Twitter Trending',
+                time: '17 hours ago',
+                summary: 'The Moltbot AI assistant has triggered a surge in Mac Mini purchases as users seek dedicated hardware for running their personal AI agents.',
+                url: 'https://x.com/search?q=Moltbot'
+            },
+            // Bitcoin (second priority)
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'Satoshis_Dragon ⚡💧 🌋',
+                handle: 'Satoshis_Dragon',
+                text: 'Amazing things are happening.\n\nWe have AI sending one another Bitcoin before gta6 release.',
+                time: 'Jan 30, 2026 · 12:31 PM',
+                likes: 0,
+                retweets: 12,
+                url: 'https://x.com/Satoshis_Dragon/status/2017319773894324268'
+            },
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'zerohedge',
+                handle: 'zerohedge',
+                text: 'Gold down $5 trillion in 48 hours',
+                time: 'Jan 30, 2026 · 11:03 AM',
+                likes: 919,
+                retweets: 143,
+                url: 'https://x.com/zerohedge/status/2017297618221580348'
+            },
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'Bark',
+                handle: 'barkmeta',
+                text: '$10T wiped out from Gold and Silver in 24 hours.\n\nThis is the largest liquidation event in human history.\n\nThis is not natural... it\'s 100% manipulation.',
+                time: 'Jan 30, 2026 · 8:36 AM',
+                likes: 7045,
+                retweets: 1013,
+                url: 'https://x.com/barkmeta/status/2017260676603891969'
+            },
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'Scaramucci',
+                handle: 'Scaramucci',
+                text: 'Silver and Gold down. Bitcoin firming. Get ready.',
+                time: 'Jan 30, 2026 · 12:25 PM',
+                likes: 0,
+                retweets: 56,
+                url: 'https://x.com/Scaramucci'
+            },
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'Samson Mow',
+                handle: 'Excellion',
+                text: 'SAMSON MOW: "I told you the God Candle was coming. I\'m telling you again that the Omega Candle is coming, along with..."',
+                time: 'Jan 30, 2026 · 12:30 PM',
+                likes: 0,
+                retweets: 59,
+                url: 'https://x.com/Excellion/status/2017319554595328259'
+            },
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'Neil Jacobs',
+                handle: 'NeilJacobs',
+                text: 'When gold prices increase, miners produce more gold.\n\nWhen Bitcoin prices increase, the issuance rate doesn\'t change.',
+                time: 'Jan 30, 2026 · 12:29 PM',
+                likes: 2,
+                retweets: 1,
+                url: 'https://x.com/NeilJacobs/status/2017319212881002914'
+            },
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'Brandon Quittem',
+                handle: 'Bquittem',
+                text: 'Congrats Gold and Silver bugs!\n\nNow take profits in Bitcoin.',
+                time: 'Jan 30, 2026 · 12:17 PM',
+                likes: 6,
+                retweets: 0,
+                url: 'https://x.com/Bquittem/status/2017316170106339712'
+            },
+            {
+                type: 'tweet',
+                category: 'bitcoin',
+                author: 'BRITISH HODL ❤️🔥🐂❤️🔥',
+                handle: 'BritishHodl',
+                text: 'How are our Gold & Silver brothers & sisters enjoying Bitcoin volatility...?\n\nOnly a broad market dip before the march to $600 an ounce!\n\nDon\'t worry! 🤡',
+                time: 'Jan 30, 2026 · 12:19 PM',
+                likes: 87,
+                retweets: 5,
+                url: 'https://x.com/BritishHodl/status/2017316771988946978'
+            },
+            // Tech
+            {
+                type: 'article',
+                category: 'tech',
+                headline: 'Apple Releases iOS 26.2.1 Update',
+                source: 'Twitter Trending',
+                time: 'Today',
+                summary: 'Apple\'s new iOS 26.2.1 update is now available for download. The update includes bug fixes and security improvements.',
+                url: 'https://x.com/search?q=iOS%2026'
+            },
+            {
+                type: 'tweet',
+                category: 'tech',
+                author: 'Peter Steinberger 🦞',
+                handle: 'steipete',
+                text: 'Folks, do I have anyone in my circle who wants to help me with https://pspdfkit.com? I really want to get a new release out, just slightly overwhelmed and don\'t wana leave everyone hanging with annoying keychain prompts.',
+                time: 'Jan 30, 2026 · 11:37 AM',
+                likes: 258,
+                retweets: 8,
+                url: 'https://x.com/steipete/status/2017306253416923154'
+            },
+            // Health/Wellness
+            {
+                type: 'tweet',
+                category: 'tech',
+                author: 'Paul Saladino, MD',
+                handle: 'paulsaladinomd',
+                text: 'Food quality is more important than calories for weight loss.\n\nTry overeating steak and boiled potatoes. Very hard.\n\nTry overeating cookies, french fries and cake. Very easy.\n\nThe key to long term weight loss is satiety.\n\nCounting calories fails long term without attention to food quality.',
+                time: 'Jan 30, 2026 · 12:29 PM',
+                likes: 11,
+                retweets: 2,
+                url: 'https://x.com/paulsaladinomd/status/2017319393621881059'
+            },
+            {
+                type: 'tweet',
+                category: 'tech',
+                author: 'Paul Saladino, MD',
+                handle: 'paulsaladinomd',
+                text: 'Game. @bryan_johnson Let\'s do it.',
+                time: 'Jan 30, 2026 · 12:18 PM',
+                likes: 50,
+                retweets: 0,
+                url: 'https://x.com/paulsaladinomd/status/2017316437782663192'
+            },
+            {
+                type: 'tweet',
+                category: 'tech',
+                author: 'Scott Barry Kaufman ⛵',
+                handle: 'sbkaufman',
+                text: 'What happens to your brain under the world\'s strongest psychedelic? UCL research reveals how the psychedelic 5‑MeO‑DMT affects the human brain, showing that core constructs like space, time, and self can dissolve while consciousness remain.',
+                time: 'Jan 30, 2026 · 12:20 PM',
+                likes: 1,
+                retweets: 1,
+                url: 'https://x.com/sbkaufman/status/2017316917199913320'
+            },
+            // News/Entertainment
+            {
+                type: 'article',
+                category: 'entertainment',
+                headline: 'Catherine O\'Hara, \'Schitt\'s Creek\' and \'Home Alone\' Star, Dies at 71',
+                source: 'Variety / TMZ',
+                time: 'Today',
+                summary: 'Catherine O\'Hara, the beloved actress known for her iconic roles in Home Alone, Schitt\'s Creek, and Beetlejuice, has passed away at age 71. The comedy legend was a staple of SCTV and worked alongside John Candy and Eugene Levy.',
+                url: 'https://variety.com/2026/film/news/catherine-ohara-dead-schitts-creek-home-alone-1236290534/'
+            },
+            {
+                type: 'article',
+                category: 'news',
+                headline: 'Don Lemon Arrested on Federal Charges After Church Protest',
+                source: 'Twitter Trending',
+                time: 'Today',
+                summary: 'Former CNN anchor Don Lemon was arrested by federal agents on conspiracy and FACE Act charges following a protest at a Minnesota church. The story is trending with significant debate online.',
+                url: 'https://x.com/search?q=Don%20Lemon'
+            },
+            {
+                type: 'article',
+                category: 'news',
+                headline: 'Epstein Files Continue to Dominate Political Discourse',
+                source: 'Twitter Trending',
+                time: 'Today',
+                summary: 'The release of Epstein files continues to generate massive discussion online, with claims and counterclaims about various public figures named in the documents.',
+                url: 'https://x.com/search?q=Epstein%20Files'
             }
         ];
 
-        let deck = [...items];
-        let savedForLater = [];
-        
+        let currentIndex = 0;
+        let history = [];
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        const container = document.getElementById('container');
+        const progressEl = document.getElementById('progress');
+        const undoIndicator = document.getElementById('undoIndicator');
+        const doneIndicator = document.getElementById('doneIndicator');
+
         function getCategoryClass(cat) {
-            const classes = {
-                politics: 'cat-politics',
-                tech: 'cat-tech',
-                crypto: 'cat-crypto',
-                weather: 'cat-weather',
-                world: 'cat-world'
+            const map = {
+                'ai': 'cat-ai',
+                'bitcoin': 'cat-bitcoin',
+                'tech': 'cat-tech',
+                'news': 'cat-news',
+                'entertainment': 'cat-entertainment'
             };
-            return classes[cat] || 'cat-tech';
+            return map[cat] || 'cat-tech';
+        }
+
+        function getCategoryLabel(cat) {
+            const map = {
+                'ai': '🤖 AI & Agents',
+                'bitcoin': '₿ Bitcoin',
+                'tech': '💻 Tech',
+                'news': '📰 News',
+                'entertainment': '🎬 Entertainment'
+            };
+            return map[cat] || cat;
+        }
+
+        function createCard(item, index) {
+            const card = document.createElement('div');
+            card.className = 'card' + (item.type === 'tweet' ? ' tweet-card' : '');
+            card.dataset.index = index;
+
+            if (item.type === 'tweet') {
+                const initial = item.author.charAt(0).toUpperCase();
+                card.innerHTML = `
+                    <div class="tweet-header">
+                        <div class="tweet-avatar">${initial}</div>
+                        <div class="tweet-author">
+                            <div class="tweet-name">${item.author}</div>
+                            <div class="tweet-handle">@${item.handle}</div>
+                        </div>
+                        <svg class="x-logo" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </div>
+                    <div class="tweet-text">${item.text}</div>
+                    <div class="tweet-time">${item.time}</div>
+                    <div class="tweet-stats">
+                        <span class="tweet-stat">❤️ ${item.likes.toLocaleString()}</span>
+                        <span class="tweet-stat">🔁 ${item.retweets.toLocaleString()}</span>
+                    </div>
+                    <a href="${item.url}" target="_blank" class="tweet-link">
+                        View on 𝕏
+                    </a>
+                `;
+            } else {
+                card.innerHTML = `
+                    <span class="card-category ${getCategoryClass(item.category)}">${getCategoryLabel(item.category)}</span>
+                    <h2 class="card-headline">${item.headline}</h2>
+                    <div class="card-meta">
+                        <span>${item.source}</span>
+                        <span>•</span>
+                        <span>${item.time}</span>
+                    </div>
+                    <p class="card-summary">${item.summary}</p>
+                    <a href="${item.url}" target="_blank" class="card-link">
+                        Read more →
+                    </a>
+                `;
+            }
+
+            return card;
+        }
+
+        function updateProgress() {
+            progressEl.textContent = `${currentIndex + 1}/${items.length}`;
         }
 
         function renderCards() {
-            const container = document.getElementById('card-container');
             container.innerHTML = '';
-            document.getElementById('remaining').textContent = deck.length;
             
-            if (deck.length === 0) {
+            if (currentIndex >= items.length) {
                 container.innerHTML = `
-                    <div class="done-message">
-                        <h2>✅ All caught up!</h2>
-                        <p>${savedForLater.length} saved for later</p>
+                    <div class="empty-state">
+                        <h2>🎉 All caught up!</h2>
+                        <p>You've reviewed all ${items.length} items</p>
                     </div>
                 `;
+                progressEl.textContent = 'Done';
                 return;
             }
 
-            // Render top 3 cards (in reverse so first is on top)
-            const toRender = deck.slice(0, 3).reverse();
-            toRender.forEach((item, reverseIndex) => {
-                const index = 2 - reverseIndex;
-                if (index >= deck.length) return;
+            // Render current card and next few for stack effect
+            for (let i = Math.min(currentIndex + 2, items.length - 1); i >= currentIndex; i--) {
+                const card = createCard(items[i], i);
+                const offset = i - currentIndex;
+                card.style.transform = `scale(${1 - offset * 0.05}) translateY(${offset * 10}px)`;
+                card.style.opacity = offset === 0 ? 1 : 0.5;
+                card.style.zIndex = items.length - i;
                 
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.dataset.index = index;
-                card.innerHTML = `
-                    <span class="swipe-hint later">SAVE</span>
-                    <span class="swipe-hint done">DONE</span>
-                    <span class="category ${getCategoryClass(item.category)}">${item.category}</span>
-                    <div class="source-time">${item.source} • ${item.time}</div>
-                    <h2 class="card-title">${item.title}</h2>
-                    <p class="card-summary">${item.summary}</p>
-                    <a href="${item.url}" target="_blank" class="view-link">Read Full Story →</a>
-                `;
-                
-                if (index === 0) {
-                    setupSwipe(card);
+                if (i === currentIndex) {
+                    setupCardInteraction(card);
                 }
+                
                 container.appendChild(card);
-            });
+            }
+            
+            updateProgress();
         }
 
-        function setupSwipe(card) {
-            let startX, currentX, isDragging = false;
-            const laterHint = card.querySelector('.swipe-hint.later');
-            const doneHint = card.querySelector('.swipe-hint.done');
+        function setupCardInteraction(card) {
+            let startX = 0;
+            let currentX = 0;
 
-            function start(e) {
-                isDragging = true;
+            function onStart(e) {
                 startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                card.classList.add('dragging');
+                isDragging = true;
+                card.style.transition = 'none';
             }
 
-            function move(e) {
+            function onMove(e) {
                 if (!isDragging) return;
                 currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
                 const diff = currentX - startX;
-                const rotate = diff * 0.05;
-                card.style.transform = `translate(calc(-50% + ${diff}px), -50%) rotate(${rotate}deg)`;
+                card.style.transform = `translateX(${diff}px) rotate(${diff * 0.05}deg)`;
                 
-                // Show hints
-                laterHint.style.opacity = diff < -30 ? Math.min(1, Math.abs(diff) / 100) : 0;
-                doneHint.style.opacity = diff > 30 ? Math.min(1, diff / 100) : 0;
-            }
-
-            function end() {
-                if (!isDragging) return;
-                isDragging = false;
-                card.classList.remove('dragging');
-                const diff = currentX - startX;
-                
-                if (diff < -80) {
-                    // Swipe LEFT = Save for later (undo)
-                    savedForLater.push(deck.shift());
-                    renderCards();
-                } else if (diff > 80) {
-                    // Swipe RIGHT = Done (dismiss)
-                    deck.shift();
-                    renderCards();
+                if (diff > 50) {
+                    doneIndicator.classList.add('visible');
+                    undoIndicator.classList.remove('visible');
+                    card.classList.add('swiping-right');
+                    card.classList.remove('swiping-left');
+                } else if (diff < -50) {
+                    undoIndicator.classList.add('visible');
+                    doneIndicator.classList.remove('visible');
+                    card.classList.add('swiping-left');
+                    card.classList.remove('swiping-right');
                 } else {
-                    card.style.transform = '';
-                    laterHint.style.opacity = 0;
-                    doneHint.style.opacity = 0;
+                    undoIndicator.classList.remove('visible');
+                    doneIndicator.classList.remove('visible');
+                    card.classList.remove('swiping-left', 'swiping-right');
                 }
             }
 
-            card.addEventListener('mousedown', start);
-            card.addEventListener('touchstart', start);
-            document.addEventListener('mousemove', move);
-            document.addEventListener('touchmove', move);
-            document.addEventListener('mouseup', end);
-            document.addEventListener('touchend', end);
-        }
-
-        function swipeLeft() {
-            if (deck.length > 0) {
-                savedForLater.push(deck.shift());
-                renderCards();
+            function onEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                const diff = currentX - startX;
+                
+                undoIndicator.classList.remove('visible');
+                doneIndicator.classList.remove('visible');
+                
+                card.style.transition = 'transform 0.3s ease';
+                
+                if (diff > 100) {
+                    // Swipe right - done
+                    card.style.transform = 'translateX(150%) rotate(20deg)';
+                    history.push(currentIndex);
+                    setTimeout(() => {
+                        currentIndex++;
+                        renderCards();
+                    }, 200);
+                } else if (diff < -100 && history.length > 0) {
+                    // Swipe left - undo
+                    card.style.transform = 'translateX(-150%) rotate(-20deg)';
+                    setTimeout(() => {
+                        currentIndex = history.pop();
+                        renderCards();
+                    }, 200);
+                } else {
+                    card.style.transform = 'translateX(0) rotate(0)';
+                    card.classList.remove('swiping-left', 'swiping-right');
+                }
             }
+
+            card.addEventListener('mousedown', onStart);
+            card.addEventListener('touchstart', onStart, { passive: true });
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('touchmove', onMove, { passive: true });
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchend', onEnd);
         }
 
-        function swipeRight() {
-            if (deck.length > 0) {
-                deck.shift();
-                renderCards();
-            }
-        }
-
-        // Keyboard controls
+        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') swipeLeft();
-            if (e.key === 'ArrowRight') swipeRight();
+            if (e.key === 'ArrowRight') {
+                if (currentIndex < items.length) {
+                    history.push(currentIndex);
+                    currentIndex++;
+                    renderCards();
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (history.length > 0) {
+                    currentIndex = history.pop();
+                    renderCards();
+                }
+            }
         });
 
+        // Initial render
         renderCards();
     </script>
 </body>
