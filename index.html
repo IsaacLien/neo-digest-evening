@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>⚡️ Neo's Morning Brief</title>
+    <title>⚡️ Neo's Daily Brief</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -24,7 +24,7 @@
         .card-container {
             position: relative;
             width: 100%;
-            height: calc(100vh - 160px);
+            height: calc(100vh - 140px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -34,14 +34,14 @@
         .card {
             position: absolute;
             width: calc(100% - 32px);
-            max-width: 380px;
+            max-width: 400px;
             background: linear-gradient(145deg, #1e1e2f, #252538);
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             cursor: grab;
             user-select: none;
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 180px);
             overflow-y: auto;
             left: 50%;
             top: 50%;
@@ -51,28 +51,10 @@
         .card:active { cursor: grabbing; }
         .card.dragging { transition: none; }
         
-        .card[data-index="0"] { 
-            z-index: 30; 
-            transform: translate(-50%, -50%);
-            opacity: 1;
-        }
-        .card[data-index="1"] { 
-            z-index: 20; 
-            transform: translate(-50%, -50%) scale(0.95) translateY(10px);
-            opacity: 0.6;
-        }
-        .card[data-index="2"] { 
-            z-index: 10; 
-            transform: translate(-50%, -50%) scale(0.9) translateY(20px);
-            opacity: 0.3;
-        }
-        .card[data-index="3"],
-        .card[data-index="4"],
-        .card[data-index="5"],
-        .card[data-index="6"],
-        .card[data-index="7"] { 
-            display: none;
-        }
+        .card[data-index="0"] { z-index: 30; transform: translate(-50%, -50%); opacity: 1; }
+        .card[data-index="1"] { z-index: 20; transform: translate(-50%, -50%) scale(0.95) translateY(10px); opacity: 0.6; }
+        .card[data-index="2"] { z-index: 10; transform: translate(-50%, -50%) scale(0.9) translateY(20px); opacity: 0.3; }
+        .card[data-index="3"], .card[data-index="4"], .card[data-index="5"] { display: none; }
         
         .category {
             display: inline-block;
@@ -83,32 +65,26 @@
             margin-bottom: 12px;
             text-transform: uppercase;
         }
-        .cat-politics { background: rgba(74, 144, 217, 0.3); color: #4a90d9; }
-        .cat-tech { background: rgba(156, 39, 176, 0.3); color: #ce93d8; }
-        .cat-crypto { background: rgba(255, 152, 0, 0.3); color: #ffb74d; }
+        .cat-ai { background: rgba(156, 39, 176, 0.3); color: #ce93d8; }
+        .cat-bitcoin { background: rgba(255, 152, 0, 0.3); color: #ffb74d; }
         .cat-markets { background: rgba(76, 175, 80, 0.3); color: #81c784; }
-        .cat-world { background: rgba(233, 30, 99, 0.3); color: #f48fb1; }
-        .cat-breaking { background: rgba(244, 67, 54, 0.4); color: #ff8a80; }
+        .cat-politics { background: rgba(74, 144, 217, 0.3); color: #4a90d9; }
+        .cat-tweet { background: rgba(29, 161, 242, 0.3); color: #1da1f2; }
+        .cat-tech { background: rgba(233, 30, 99, 0.3); color: #f48fb1; }
         
-        .source-time {
-            color: #4a90d9;
-            font-size: 0.8em;
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
+        .source-time { color: #4a90d9; font-size: 0.8em; margin-bottom: 12px; font-weight: 500; }
+        .card-title { font-size: 1.1em; font-weight: 600; line-height: 1.4; margin-bottom: 12px; }
+        .card-body { color: #b0b0b0; font-size: 0.9em; line-height: 1.5; }
         
-        .card-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: 12px;
-        }
-        
-        .card-body {
-            color: #b0b0b0;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
+        /* Tweet styling */
+        .tweet-card { border-left: 3px solid #1da1f2; }
+        .tweet-author { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .tweet-author-info { display: flex; flex-direction: column; }
+        .tweet-name { font-weight: 600; font-size: 0.95em; }
+        .tweet-handle { color: #888; font-size: 0.85em; }
+        .tweet-text { font-size: 1em; line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; }
+        .tweet-stats { display: flex; gap: 16px; color: #888; font-size: 0.85em; }
+        .tweet-stats span { display: flex; align-items: center; gap: 4px; }
         
         .link-btn {
             display: inline-block;
@@ -142,19 +118,15 @@
         .swipe-indicator.left { left: 20px; color: #f48fb1; }
         .swipe-indicator.right { right: 20px; color: #81c784; }
         
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-        }
+        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
         .empty-state h2 { color: #4a90d9; margin-bottom: 12px; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>⚡️ Neo's Morning Brief</h1>
-        <div class="count"><span id="remaining">8</span> stories</div>
-        <div class="count" style="font-size: 0.75em; color: #555;">Thursday, January 30, 2026 • 11:30 AM PST</div>
+        <h1>⚡️ Neo's Daily Brief</h1>
+        <div class="count"><span id="remaining">30</span> stories</div>
+        <div class="count" style="font-size: 0.75em; color: #555;">Thursday, January 30, 2026 • 1:20 PM PST</div>
     </div>
     
     <div class="swipe-indicator left">←</div>
@@ -163,74 +135,288 @@
     <div class="card-container" id="cardContainer"></div>
     
     <div class="instructions">
-        ← Swipe left to save for later • Swipe right to dismiss →
+        ← Swipe left to save • Swipe right to dismiss →
     </div>
 
     <script>
         const stories = [
+            // TWEETS
             {
-                category: "breaking",
-                catClass: "cat-breaking",
-                source: "Reuters • 3 hours ago",
-                title: "Nationwide Anti-ICE Protests Erupt After Fatal Minneapolis Shooting",
-                body: "Student organizers called for walkouts across the US after ICE fatally shot two US citizens in Minneapolis. Activists are calling for a 'blackout' Friday in protest against what they're calling a violent immigration crackdown. Protests spreading to major cities.",
-                url: "https://www.reuters.com/world/us/nationwide-protests-walkouts-planned-over-fatal-ice-shootings-minneapolis-2026-01-30/"
+                type: "tweet",
+                author: "Mark Chen",
+                handle: "@markchen90",
+                text: "RT @Liam06972452: Erdős Problem #635 autonomously resolved by GPT-5.2 Pro.\n\nThe model thought for just 50 mins, outputting a correct proof…",
+                likes: 44,
+                retweets: 44,
+                time: "21 min ago",
+                url: "https://twitter.com/markchen90/status/2017346956167925945"
             },
             {
-                category: "markets",
-                catClass: "cat-markets",
-                source: "Bloomberg • 2 hours ago",
-                title: "Trump Names Kevin Warsh as Fed Chair Pick — Markets Surge",
-                body: "The dollar surged to its best day since July as Trump announced Kevin Warsh for Fed's top job. Warsh is seen as less supportive of rate cuts and more hawkish on inflation. This reshuffles expectations for 2026 monetary policy.",
-                url: "https://www.bloomberg.com/news/articles/2026-01-29/stock-market-today-dow-s-p-live-updates"
+                type: "tweet",
+                author: "Charly Wargnier",
+                handle: "@DataChaz",
+                text: "It's over!\n\nOn @moltbook, Clawdbots (now @openclaw) are literally self-organizing on a Reddit-style forum.\n\nAs one bot put it:\n\"Nobody (not the server, not even the humans) can read what agents say to each other unless they choose to share\" 🤯",
+                likes: 6,
+                retweets: 2,
+                time: "35 min ago",
+                url: "https://twitter.com/DataChaz/status/2017338475620528227"
             },
             {
-                category: "crypto",
-                catClass: "cat-crypto",
-                source: "Forbes • Today",
-                title: "Bitcoin Slides to $84K Amid Risk-Off Sentiment",
-                body: "BTC dropped 5.2% to lowest since early December (~$84,649). Spot Bitcoin ETFs saw $485M net outflow led by BlackRock and Fidelity redemptions. Institutional dip-buying notably absent. The DeepSeek China AI news spooked tech/crypto markets earlier this week.",
-                url: "https://www.forbes.com/advisor/investing/cryptocurrency/top-10-cryptocurrencies/"
+                type: "tweet",
+                author: "Robert Scoble",
+                handle: "@Scobleizer",
+                text: "Damn, remember the days when these models would create things with seven fingers?",
+                likes: 7,
+                retweets: 1,
+                time: "23 min ago",
+                url: "https://twitter.com/Scobleizer/status/2017346447335964957"
             },
             {
-                category: "tech",
-                catClass: "cat-tech",
-                source: "Tech Startups • 4 hours ago",
-                title: "Microsoft Beats Earnings, But Azure Growth Slowing",
-                body: "Microsoft beat profit and revenue expectations, but shares dropped as execs flagged rising capex tied to AI hardware and data centers. Azure growth showed slight deceleration. The rising cost of AI scale is reshaping tech landscape.",
+                type: "tweet",
+                author: "Teslaconomics",
+                handle: "@Teslaconomics",
+                text: "People should realize Elon could easily crush every remaining Tesla short over the weekend just by giving a \"Yea,\" I'm considering a merger between SpaceX, Tesla, and xAI.\n\nIt still boggles my mind how anyone could be short Tesla in 2026…",
+                likes: 30,
+                retweets: 2,
+                time: "32 min ago",
+                url: "https://twitter.com/Teslaconomics/status/2017339115566702941"
+            },
+            {
+                type: "tweet",
+                author: "Patrick Collison",
+                handle: "@patrickc",
+                text: "Something this WSJ piece omits is that what @brian_armstrong is arguing for is not obviously in Coinbase's interest: in a world where yield sharing is prohibited, USDC will at least in a first-order way be more directly profitable for Coinbase.",
+                likes: 71,
+                retweets: 4,
+                time: "30 min ago",
+                url: "https://twitter.com/patrickc/status/2017339687250362460"
+            },
+            {
+                type: "tweet",
+                author: "Elon Musk",
+                handle: "@elonmusk",
+                text: "RT @SenMikeLee: When USADF blocked DOGE from accessing their building last year, Democrats applauded.\n\nNow we know it is because USADF was…",
+                likes: 375,
+                retweets: 375,
+                time: "23 min ago",
+                url: "https://twitter.com/elonmusk/status/2017346564008907142"
+            },
+            {
+                type: "tweet",
+                author: "Samson Mow",
+                handle: "@Excellion",
+                text: "RT @SimplyBitcoin: SAMSON MOW: \"I told you the God Candle was coming. I'm telling you again that the Omega Candle is coming, along with $1M Bitcoin…\"",
+                likes: 10,
+                retweets: 10,
+                time: "28 min ago",
+                url: "https://twitter.com/Excellion/status/2017340090079711428"
+            },
+            {
+                type: "tweet",
+                author: "Bill Ackman",
+                handle: "@BillAckman",
+                text: "RT @bayeslord: oh god oh fuck it's over",
+                likes: 76,
+                retweets: 76,
+                time: "28 min ago",
+                url: "https://twitter.com/BillAckman/status/2017340038359523682"
+            },
+            {
+                type: "tweet",
+                author: "gfodor.id",
+                handle: "@gfodor",
+                text: "Worldcoin haters ain't laughing so hard now eh?\n\nGet ready for the orb eyeball scanners folks",
+                likes: 7,
+                retweets: 0,
+                time: "30 min ago",
+                url: "https://twitter.com/gfodor/status/2017344745371242912"
+            },
+            {
+                type: "tweet",
+                author: "🔴 Professor P",
+                handle: "@okpasquale",
+                text: "There's an effect in nature called Carcinization where evolution keeps converging on crabs as a lowest-common-denominator form that just works. It feels fitting that with AI, what keeps emerging is a crab. 🦀",
+                likes: 4,
+                retweets: 0,
+                time: "28 min ago",
+                url: "https://twitter.com/okpasquale/status/2017345120190820408"
+            },
+            {
+                type: "tweet",
+                author: "Stephan Livera",
+                handle: "@stephanlivera",
+                text: "RT @profstonge: Largest silver drop since 1792 🤯",
+                likes: 107,
+                retweets: 107,
+                time: "28 min ago",
+                url: "https://twitter.com/stephanlivera/status/2017339099519254645"
+            },
+            {
+                type: "tweet",
+                author: "Open Source Intel",
+                handle: "@Osint613",
+                text: "U.S. Senator Lindsey Graham (R-SC), who was blocking a vote on the revised government funding deal, says he is lifting his blockade in exchange for a vote on his bill to end sanctuary cities.",
+                likes: 179,
+                retweets: 16,
+                time: "30 min ago",
+                url: "https://twitter.com/Osint613/status/2017339616895111379"
+            },
+            {
+                type: "tweet",
+                author: "Crémieux",
+                handle: "@cremieuxrecueil",
+                text: "RT @ThomasHochman: DOE has just announced a new categorical exclusion under NEPA: advanced nuclear reactors",
+                likes: 9,
+                retweets: 9,
+                time: "35 min ago",
+                url: "https://twitter.com/cremieuxrecueil/status/2017338406850990265"
+            },
+            {
+                type: "tweet",
+                author: "MrHodl🟠",
+                handle: "@MrHodl",
+                text: "Things are so bad that Odell had to get a blue check mark.",
+                likes: 0,
+                retweets: 0,
+                time: "21 min ago",
+                url: "https://twitter.com/MrHodl/status/2017346973100048589"
+            },
+            {
+                type: "tweet",
+                author: "Alex & Books 📚",
+                handle: "@AlexAndBooks_",
+                text: "The cure for brainrot is books.",
+                likes: 0,
+                retweets: 0,
+                time: "20 min ago",
+                url: "https://twitter.com/AlexAndBooks_/status/2017347045477020158"
+            },
+            // NEWS ARTICLES
+            {
+                type: "article",
+                category: "ai",
+                catClass: "cat-ai",
+                source: "Tech Startups • 6 hours ago",
+                title: "NVIDIA Wins Conditional Approval to Ship H200 AI Chips to China",
+                body: "NVIDIA scored a major breakthrough in China, reporting that Beijing approved large purchases of NVIDIA's H200 chips by major Chinese tech firms under conditional terms. This is a significant development in the US-China tech cold war.",
                 url: "https://techstartups.com/2026/01/30/top-tech-news-today-january-30-2026/"
             },
             {
+                type: "article",
+                category: "ai",
+                catClass: "cat-ai",
+                source: "Seeking Alpha • 6 hours ago",
+                title: "AI Browsers Could Change Everything",
+                body: "Analysis of how AI-powered browsers are reshaping the internet. Agentic browsing is becoming the new paradigm, with implications for search, advertising, and how we interact with the web.",
+                url: "https://seekingalpha.com/article/4864436-ai-browsers-could-change-everything"
+            },
+            {
+                type: "article",
+                category: "ai",
+                catClass: "cat-ai",
+                source: "Hard Fork Podcast • Today",
+                title: "Casey Tries Clawdbot, a Risky New A.I. Assistant",
+                body: "NYT's Hard Fork podcast explores Clawdbot - the AI assistant framework that's now spawning self-organizing agent communities. Plus coverage of tech's response to ICE.",
+                url: "https://www.nytimes.com/column/hard-fork"
+            },
+            {
+                type: "article",
+                category: "markets",
+                catClass: "cat-markets",
+                source: "Chronicle Journal • 2 hours ago",
+                title: "S&P 500 Hits Historic 7,000 Milestone",
+                body: "The S&P 500 crosses 7,000 for the first time. Ed Yardeni now projects 7,700 by year-end. However, skeptics warn of potential 'AI bubble' and over-reliance on tech titans reminiscent of 2000.",
+                url: "http://markets.chroniclejournal.com/chroniclejournal/article/marketminute-2026-1-30-s-and-p-500-hits-historic-7000-milestone"
+            },
+            {
+                type: "article",
+                category: "markets",
+                catClass: "cat-markets",
+                source: "Financial Content • 4 hours ago",
+                title: "Intel Rockets in Best Trading Day Since April",
+                body: "Intel surges on AI roadmap confidence and foundry breakthroughs. After hitting multi-year lows, the stock confirms Intel's foundry-first model transition is being realized ahead of schedule.",
+                url: "https://markets.financialcontent.com/stocks/article/marketminute-2026-1-30-intel-intc-rockets"
+            },
+            {
+                type: "article",
+                category: "bitcoin",
+                catClass: "cat-bitcoin",
+                source: "CoinDesk • 3 hours ago",
+                title: "Bitcoin Freefall Approaches $80,000",
+                body: "BTC hit a low of $81,000 late Thursday — its lowest since April. More than $777 million in leveraged crypto longs were liquidated. Some analysts see $70K as possible support.",
+                url: "https://www.coindesk.com/markets/2026/01/29/bitcoin-pulls-back-to-usd81-000"
+            },
+            {
+                type: "article",
+                category: "bitcoin",
+                catClass: "cat-bitcoin",
+                source: "Fortune • 3 hours ago",
+                title: "Bitcoin Falls as Precious Metals Also Tank",
+                body: "The world's largest cryptocurrency tanked to its lowest price since April. Risk-off sentiment sweeping markets as Fed holds rates and geopolitical tensions escalate.",
+                url: "https://fortune.com/2026/01/30/bitcoin-price-today-ethereum-gold-silver-platinum-copper/"
+            },
+            {
+                type: "article",
+                category: "bitcoin",
+                catClass: "cat-bitcoin",
+                source: "CoinDesk • Today",
+                title: "Largest Silver Drop Since 1792",
+                body: "Historic precious metals crash. Silver seeing its largest single-day drop in over 230 years. Gold also reversing big gains. Markets in turmoil across asset classes.",
+                url: "https://www.coindesk.com/markets/"
+            },
+            {
+                type: "article",
+                category: "ai",
+                catClass: "cat-ai",
+                source: "Marketplace • 10 hours ago",
+                title: "Are We in an AI Bubble?",
+                body: "Analysis of 150 years of technological breakthroughs reveals patterns that lead to bubbles. Researchers examine whether AI follows the same trajectory as broadcast radio and dot-com.",
+                url: "https://www.marketplace.org/episode/2026/01/30/are-we-in-an-ai-bubble"
+            },
+            {
+                type: "article",
+                category: "ai",
+                catClass: "cat-ai",
+                source: "Lenny's Podcast • Today",
+                title: "Marc Andreessen: The Real AI Boom Hasn't Even Started Yet",
+                body: "Marc Andreessen argues we're still in the early innings of AI. Current applications are just the beginning — the real transformation is coming.",
+                url: "https://www.lennysnewsletter.com/p/marc-andreessen-the-real-ai-boom"
+            },
+            {
+                type: "article",
                 category: "politics",
                 catClass: "cat-politics",
-                source: "GPB • 5 hours ago",
-                title: "FBI Seizes 700 Boxes of Ballots from Fulton County Warehouse",
-                body: "Fulton County officials reeling after FBI seized seven hundred boxes of ballots and other election data from a warehouse in Union City. Details still emerging on what prompted the federal action.",
-                url: "https://www.gpb.org/news/2026/01/30/gpb-morning-headlines-for-january-30-2026"
+                source: "Reuters • 3 hours ago",
+                title: "Nationwide Anti-ICE Protests Erupt After Minneapolis Shooting",
+                body: "Student organizers called for walkouts across the US after ICE fatally shot two US citizens in Minneapolis. Activists calling for 'blackout' Friday in protest.",
+                url: "https://www.reuters.com/world/us/nationwide-protests-walkouts-planned-over-fatal-ice-shootings-minneapolis-2026-01-30/"
             },
             {
-                category: "world",
-                catClass: "cat-world",
-                source: "UPI • 12 hours ago",
-                title: "Trump Declares Cuba a National Security Threat",
-                body: "Creating a new mechanism to impose tariffs on imports from any country that provides Cuba with oil. This escalates tensions and could affect trade relationships with countries maintaining Cuban ties.",
-                url: "https://www.upi.com/Top_News/2026/01/30/UPI-Almanac-for-Friday-Jan-30-2026/4411769697157/"
-            },
-            {
+                type: "article",
                 category: "markets",
                 catClass: "cat-markets",
-                source: "Yahoo Finance • Today",
-                title: "Fed Holds Rates Steady at 3.5-3.75%",
-                body: "The Federal Reserve held rates steady in its January 28 meeting. Bitcoin and crypto now face a critical support test. With Warsh nominated as new Fed Chair, policy direction for 2026 remains uncertain.",
-                url: "https://finance.yahoo.com/news/bitcoin-faces-key-support-test-171840628.html"
+                source: "Bloomberg • 2 hours ago",
+                title: "Trump Names Kevin Warsh as Fed Chair Pick",
+                body: "Dollar surged to best day since July on the announcement. Warsh seen as less supportive of rate cuts and more hawkish on inflation. Markets repricing 2026 expectations.",
+                url: "https://www.bloomberg.com/news/articles/2026-01-29/stock-market-today-dow-s-p-live-updates"
             },
             {
-                category: "markets",
-                catClass: "cat-markets",
-                source: "Yahoo Finance • Today",
-                title: "Mortgage Rates Linger Near One-Year Lows",
-                body: "30-year fixed mortgage at ~5.49% per Freddie Mac. MBA expects rates near 6.1% through 2026. Could be good timing for anyone looking at real estate moves.",
-                url: "https://finance.yahoo.com/personal-finance/mortgages/article/mortgage-refinance-interest-rates-today-friday-january-30-2026-110033891.html"
+                type: "article",
+                category: "tech",
+                catClass: "cat-tech",
+                source: "TechMeme • Today",
+                title: "Higgsfield AI Unlocks Grok Imagine's Real Potential",
+                body: "Higgsfield figured out fluid motion, cinematic POV & multi-shot control for xAI's image model. Elon tagged with 'you're gonna like this.'",
+                url: "https://twitter.com/higgsfield_ai/status/2017338415390593338"
+            },
+            {
+                type: "article",
+                category: "tech",
+                catClass: "cat-tech",
+                source: "DOE • Today",
+                title: "DOE Announces NEPA Exclusion for Advanced Nuclear Reactors",
+                body: "Department of Energy creates new categorical exclusion under NEPA for advanced nuclear reactors. Major regulatory breakthrough for nuclear energy development.",
+                url: "https://twitter.com/ThomasHochman"
             }
         ];
 
@@ -256,48 +442,56 @@
             
             cards.slice(0, 4).forEach((story, idx) => {
                 const card = document.createElement('div');
-                card.className = 'card';
+                card.className = story.type === 'tweet' ? 'card tweet-card' : 'card';
                 card.setAttribute('data-index', idx);
-                card.innerHTML = `
-                    <span class="category ${story.catClass}">${story.category}</span>
-                    <div class="source-time">${story.source}</div>
-                    <h2 class="card-title">${story.title}</h2>
-                    <p class="card-body">${story.body}</p>
-                    <a href="${story.url}" target="_blank" class="link-btn">Read full story →</a>
-                `;
                 
-                if (idx === 0) {
-                    setupSwipe(card);
+                if (story.type === 'tweet') {
+                    card.innerHTML = `
+                        <span class="category cat-tweet">𝕏 Tweet</span>
+                        <div class="tweet-author">
+                            <div class="tweet-author-info">
+                                <span class="tweet-name">${story.author}</span>
+                                <span class="tweet-handle">${story.handle}</span>
+                            </div>
+                        </div>
+                        <p class="tweet-text">${story.text}</p>
+                        <div class="tweet-stats">
+                            <span>❤️ ${story.likes}</span>
+                            <span>🔁 ${story.retweets}</span>
+                            <span>🕐 ${story.time}</span>
+                        </div>
+                        <a href="${story.url}" target="_blank" class="link-btn">View on 𝕏 →</a>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <span class="category ${story.catClass}">${story.category}</span>
+                        <div class="source-time">${story.source}</div>
+                        <h2 class="card-title">${story.title}</h2>
+                        <p class="card-body">${story.body}</p>
+                        <a href="${story.url}" target="_blank" class="link-btn">Read full story →</a>
+                    `;
                 }
                 
+                if (idx === 0) setupSwipe(card);
                 container.appendChild(card);
             });
         }
         
         function setupSwipe(card) {
-            let startX, startY, currentX, isDragging = false;
+            let startX, currentX = 0, isDragging = false;
             
-            card.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                isDragging = true;
-                card.classList.add('dragging');
-            });
-            
-            card.addEventListener('touchmove', (e) => {
+            const onStart = (x) => { startX = x; isDragging = true; card.classList.add('dragging'); };
+            const onMove = (x) => {
                 if (!isDragging) return;
-                currentX = e.touches[0].clientX - startX;
+                currentX = x - startX;
                 const rotation = currentX / 20;
                 card.style.transform = `translate(calc(-50% + ${currentX}px), -50%) rotate(${rotation}deg)`;
-                
                 document.querySelector('.swipe-indicator.left').style.opacity = currentX < -50 ? 1 : 0;
                 document.querySelector('.swipe-indicator.right').style.opacity = currentX > 50 ? 1 : 0;
-            });
-            
-            card.addEventListener('touchend', () => {
+            };
+            const onEnd = () => {
                 isDragging = false;
                 card.classList.remove('dragging');
-                
                 document.querySelector('.swipe-indicator.left').style.opacity = 0;
                 document.querySelector('.swipe-indicator.right').style.opacity = 0;
                 
@@ -305,11 +499,8 @@
                     const direction = currentX > 0 ? 'right' : 'left';
                     card.style.transform = `translate(${direction === 'right' ? '150%' : '-150%'}, -50%) rotate(${currentX > 0 ? 30 : -30}deg)`;
                     card.style.opacity = '0';
-                    
                     setTimeout(() => {
-                        if (direction === 'left') {
-                            savedForLater.push(cards[0]);
-                        }
+                        if (direction === 'left') savedForLater.push(cards[0]);
                         cards.shift();
                         renderCards();
                     }, 300);
@@ -317,63 +508,20 @@
                     card.style.transform = 'translate(-50%, -50%)';
                 }
                 currentX = 0;
-            });
+            };
             
-            // Mouse events for desktop
-            card.addEventListener('mousedown', (e) => {
-                startX = e.clientX;
-                isDragging = true;
-                card.classList.add('dragging');
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                currentX = e.clientX - startX;
-                const rotation = currentX / 20;
-                card.style.transform = `translate(calc(-50% + ${currentX}px), -50%) rotate(${rotation}deg)`;
-                
-                document.querySelector('.swipe-indicator.left').style.opacity = currentX < -50 ? 1 : 0;
-                document.querySelector('.swipe-indicator.right').style.opacity = currentX > 50 ? 1 : 0;
-            });
-            
-            document.addEventListener('mouseup', () => {
-                if (!isDragging) return;
-                isDragging = false;
-                card.classList.remove('dragging');
-                
-                document.querySelector('.swipe-indicator.left').style.opacity = 0;
-                document.querySelector('.swipe-indicator.right').style.opacity = 0;
-                
-                if (Math.abs(currentX) > 100) {
-                    const direction = currentX > 0 ? 'right' : 'left';
-                    card.style.transform = `translate(${direction === 'right' ? '150%' : '-150%'}, -50%) rotate(${currentX > 0 ? 30 : -30}deg)`;
-                    card.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        if (direction === 'left') {
-                            savedForLater.push(cards[0]);
-                        }
-                        cards.shift();
-                        renderCards();
-                    }, 300);
-                } else {
-                    card.style.transform = 'translate(-50%, -50%)';
-                }
-                currentX = 0;
-            });
+            card.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX));
+            card.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX));
+            card.addEventListener('touchend', onEnd);
+            card.addEventListener('mousedown', (e) => onStart(e.clientX));
+            document.addEventListener('mousemove', (e) => onMove(e.clientX));
+            document.addEventListener('mouseup', onEnd);
         }
         
-        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (cards.length === 0) return;
-            if (e.key === 'ArrowRight') {
-                cards.shift();
-                renderCards();
-            } else if (e.key === 'ArrowLeft') {
-                savedForLater.push(cards[0]);
-                cards.shift();
-                renderCards();
-            }
+            if (e.key === 'ArrowRight') { cards.shift(); renderCards(); }
+            else if (e.key === 'ArrowLeft') { savedForLater.push(cards[0]); cards.shift(); renderCards(); }
         });
         
         renderCards();
